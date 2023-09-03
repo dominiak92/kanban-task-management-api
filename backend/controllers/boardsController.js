@@ -25,7 +25,7 @@ const createBoard = asyncHandler(async (req, res) => {
   res.status(201).json(createdBoard);
 });
 
-// @desc Get a single board for a user by ID
+// @desc Get a single board by ID
 // @route GET /api/boards/:id
 // @access Private (but accessible by all logged-in users)
 
@@ -49,7 +49,7 @@ const getBoardById = asyncHandler(async (req, res) => {
 // @route PUT /api/boards/:id
 // @access Private (but accessible by all logged-in users)
 
-const updateBoardName = asyncHandler(async (req, res) => {
+const updateBoardNameAndColumns = asyncHandler(async (req, res) => {
   if (!req.user || !req.user.id) {
     res.status(401);
     throw new Error("User not authorized");
@@ -62,8 +62,22 @@ const updateBoardName = asyncHandler(async (req, res) => {
     throw new Error("Board not found");
   }
 
+  //Edit Board Name
+
   if (req.body.name) {
     board.name = req.body.name;
+  }
+
+  // Add new columns
+
+  if (req.body.newColumns) {
+    board.columns.push(...req.body.newColumns);
+  }
+
+  if (req.body.columnsToRemove) {
+    board.columns = board.columns.filter(
+      (column) => !req.body.columnsToRemove.includes(column._id)
+    );
   }
 
   const updatedBoard = await board.save();
@@ -91,3 +105,5 @@ const deleteBoard = asyncHandler(async (req, res) => {
 
   res.status(200).json({ id: req.params.id });
 });
+
+// COLUMNS
