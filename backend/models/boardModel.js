@@ -3,7 +3,7 @@ const mongoose = require("mongoose");
 const subtaskSchema = new mongoose.Schema({
   title: {
     type: String,
-    required: true,
+    default: '',
   },
   isCompleted: {
     type: Boolean,
@@ -14,20 +14,20 @@ const subtaskSchema = new mongoose.Schema({
 const TaskSchema = new mongoose.Schema({
   title: {
     type: String,
-    required: true,
+    default: '',
   },
   description: {
     type: String,
-    required: true,
+    default: '',
   },
   status: {
     type: String,
-    required: true,
+    default: '',
     enum: ["todo", "doing", "done", "now", "next", "later"],
   },
   subtasks: {
     type: [subtaskSchema],
-    required: true,
+    default: [],
   },
 });
 
@@ -38,15 +38,18 @@ const ColumnSchema = new mongoose.Schema({
   },
   tasks: {
     type: [TaskSchema],
-    required: true,
+    default: [],
   },
 });
 
 const BoardSchema = new mongoose.Schema({
-  name: String,
+  name: {
+    type: String,
+    required: true,
+  },
   columns: {
     type: [ColumnSchema],
-    required: true,
+    default: [],
   },
 });
 
