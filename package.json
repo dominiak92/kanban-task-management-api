@@ -1,0 +1,23 @@
+{
+  "name": "kanban-task-management-api",
+  "version": "1.0.0",
+  "description": "Kanban task management API",
+  "main": "server.js",
+  "scripts": {
+    "start": "node backend/server.js",
+    "server": "nodemon backend/server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/dominiak92/kanban-task-management-api.git"
+  },
+  "author": "",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/dominiak92/kanban-task-management-api/issues"
+  },
+  "homepage": "https://github.com/dominiak92/kanban-task-management-api#readme",
+  "devDependencies": {
+    "nodemon": "^3.0.1"
+  }
+}
