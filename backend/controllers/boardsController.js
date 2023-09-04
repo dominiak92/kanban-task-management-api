@@ -21,7 +21,7 @@ const createBoard = asyncHandler(async (req, res) => {
   });
 
   const createdBoard = await board.save();
-  res.status(201).json(createdBoard);
+  res.status(201).json("Board is created " + createdBoard);
 });
 
 // @desc Get a single board by ID
@@ -29,12 +29,6 @@ const createBoard = asyncHandler(async (req, res) => {
 // @access Private (but accessible by all logged-in users)
 
 const getBoardById = asyncHandler(async (req, res) => {
-  // Check if user is logged in
-  if (!req.user || !req.user.id) {
-    res.status(401);
-    throw new Error("User not authorized");
-  }
-
   const board = await Board.findById(req.params.id);
   if (!board) {
     res.status(404);
@@ -49,11 +43,6 @@ const getBoardById = asyncHandler(async (req, res) => {
 // @access Private (but accessible by all logged-in users)
 
 const updateBoardNameAndColumns = asyncHandler(async (req, res) => {
-  if (!req.user || !req.user.id) {
-    res.status(401);
-    throw new Error("User not authorized");
-  }
-
   const board = await Board.findById(req.params.id);
 
   if (!board) {
@@ -80,7 +69,8 @@ const updateBoardNameAndColumns = asyncHandler(async (req, res) => {
   }
 
   const updatedBoard = await board.save();
-  res.status(200).json(updatedBoard);
+
+  res.status(200).json("Board is updated " + updatedBoard);
 });
 
 // @desc Delete a board
@@ -88,11 +78,6 @@ const updateBoardNameAndColumns = asyncHandler(async (req, res) => {
 // @access Private (but accessible by all logged-in users)
 
 const deleteBoard = asyncHandler(async (req, res) => {
-  if (!req.user || !req.user.id) {
-    res.status(401);
-    throw new Error("User not authorized");
-  }
-
   const board = await Board.findById(req.params.id);
 
   if (!board) {
@@ -102,7 +87,7 @@ const deleteBoard = asyncHandler(async (req, res) => {
 
   await board.deleteOne();
 
-  res.status(200).json({ id: req.params.id });
+  res.status(200).json({ message: `Board of id: ${req.params.id} deleted` });
 });
 
 // @desc Add a new task to a specific column in a specific board
@@ -110,10 +95,6 @@ const deleteBoard = asyncHandler(async (req, res) => {
 // @access Private (but accessible by all logged-in users)
 
 const addTaskToColumn = asyncHandler(async (req, res) => {
-  if (!req.user || !req.user.id) {
-    res.status(401);
-    throw new Error("User not authorized");
-  }
   //Find the board
   const board = await Board.findById(req.params.boardId);
   if (!board) {
@@ -146,7 +127,7 @@ const addTaskToColumn = asyncHandler(async (req, res) => {
 
   await board.save();
 
-  res.status(201).json(newTask);
+  res.status(200).json({ message: "Task added " + newTask });
 });
 
 // @desc Edit task in a specific column in a specific board
@@ -154,10 +135,6 @@ const addTaskToColumn = asyncHandler(async (req, res) => {
 // @access Private (but accessible by all logged-in users)
 
 const editTask = asyncHandler(async (req, res) => {
-  if (!req.user || !req.user.id) {
-    res.status(401);
-    throw new Error("User not authorized");
-  }
   //Find the board
   const board = await Board.findById(req.params.boardId);
   if (!board) {
@@ -207,7 +184,7 @@ const editTask = asyncHandler(async (req, res) => {
   }
 
   await board.save();
-  res.status(200).json(task); // Return updated task
+  res.status(200).json({ message: "Task updated " + task });
 });
 
 // @desc Delete task in a specific column in a specific board
@@ -215,10 +192,6 @@ const editTask = asyncHandler(async (req, res) => {
 // @access Private (but accessible by all logged-in users)
 
 const deleteTask = asyncHandler(async (req, res) => {
-  if (!req.user || !req.user.id) {
-    res.status(401);
-    throw new Error("User not authorized");
-  }
   //Find the board
   const board = await Board.findById(req.params.boardId);
   if (!board) {
@@ -249,60 +222,55 @@ const deleteTask = asyncHandler(async (req, res) => {
 // @access Private (but accessible by all logged-in users)
 
 const editSubtask = asyncHandler(async (req, res) => {
-    if (!req.user || !req.user.id) {
-      res.status(401);
-      throw new Error("User not authorized");
-    }
-    //Find the board
-    const board = await Board.findById(req.params.boardId);
-    if (!board) {
-      res.status(404);
-      throw new Error("Board not found");
-    }
-  
-    //Find the column
-    const column = board.columns.id(req.params.columnId);
-    if (!column) {
-      res.status(404);
-      throw new Error("Column not found");
-    }
-  
-    //Find the task
-    const task = column.tasks.id(req.params.taskId);
-    if (!task) {
-      res.status(404);
-      throw new Error("Task not found");
-    }
-  
-    // Edit task fields
-    if (req.body.status) {
-      task.status = req.body.status;
-    }
-  
-    // Edit or add subtasks
-    if (req.body.subtasks && Array.isArray(req.body.subtasks)) {
-        task.subtasks = task.subtasks.map((currentSubtask, index) => {
-          const newSubtask = req.body.subtasks[index];
-          return {
-            ...currentSubtask,
-            ...newSubtask
-          };
-        });
-    }
-  
-    await board.save();
-    res.status(200).json(task); // Return updated task
-  });
+  //Find the board
+  const board = await Board.findById(req.params.boardId);
+  if (!board) {
+    res.status(404);
+    throw new Error("Board not found");
+  }
 
-  module.exports = {
-    getBoards,
-    getBoardById,
-    createBoard,
-    deleteBoard,
-    updateBoardNameAndColumns,
-    addTaskToColumn,
-    deleteTask,
-    editTask,
-    editSubtask
-  };
-  
+  //Find the column
+  const column = board.columns.id(req.params.columnId);
+  if (!column) {
+    res.status(404);
+    throw new Error("Column not found");
+  }
+
+  //Find the task
+  const task = column.tasks.id(req.params.taskId);
+  if (!task) {
+    res.status(404);
+    throw new Error("Task not found");
+  }
+
+  // Edit task fields
+  if (req.body.status) {
+    task.status = req.body.status;
+  }
+
+  // Edit or add subtasks
+  if (req.body.subtasks && Array.isArray(req.body.subtasks)) {
+    task.subtasks = task.subtasks.map((currentSubtask, index) => {
+      const newSubtask = req.body.subtasks[index];
+      return {
+        ...currentSubtask,
+        ...newSubtask,
+      };
+    });
+  }
+
+  await board.save();
+  res.status(200).json({ message: "Subtask updated " + task }); // Return updated task
+});
+
+module.exports = {
+  getBoards,
+  getBoardById,
+  createBoard,
+  deleteBoard,
+  updateBoardNameAndColumns,
+  addTaskToColumn,
+  deleteTask,
+  editTask,
+  editSubtask,
+};
