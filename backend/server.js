@@ -8,8 +8,10 @@ const port = process.env.PORT || 5000;
 connectDB();
 
 const app = express();
+
 app.use(cors({
-    origin: 'http://localhost:3000' 
+    origin: 'http://localhost:5000'
+    // || 'http://localhost:3000' // Zakładając, że Twój klient działa na porcie 3000
   }));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));

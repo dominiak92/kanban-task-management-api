@@ -10,7 +10,7 @@ const {
   deleteTask,
   editTask,
   editSubtask,
-} = require("../controllers/boardsControllers");
+} = require("../controllers/boardsController");
 
 const { protect } = require("../middleware/authMiddleware");
 
