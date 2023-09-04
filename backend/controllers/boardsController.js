@@ -1,6 +1,5 @@
 const asyncHandler = require("express-async-handler");
 const Board = require("../models/boardModel");
-const User = require("../models/userModel");
 
 // @desc Get all boards
 // @route GET /api/boards
@@ -240,7 +239,70 @@ const deleteTask = asyncHandler(async (req, res) => {
     res.status(404);
     throw new Error("Task not found");
   }
-  task.remove()
+  task.remove();
   await board.save();
   res.status(200).json({ message: "Task deleted" });
 });
+
+// @desc Edit subtask in a specific column in a specific board
+// @route PUT /boards/:boardId/columns/:columnId/tasks/:tasksId
+// @access Private (but accessible by all logged-in users)
+
+const editSubtask = asyncHandler(async (req, res) => {
+    if (!req.user || !req.user.id) {
+      res.status(401);
+      throw new Error("User not authorized");
+    }
+    //Find the board
+    const board = await Board.findById(req.params.boardId);
+    if (!board) {
+      res.status(404);
+      throw new Error("Board not found");
+    }
+  
+    //Find the column
+    const column = board.columns.id(req.params.columnId);
+    if (!column) {
+      res.status(404);
+      throw new Error("Column not found");
+    }
+  
+    //Find the task
+    const task = column.tasks.id(req.params.taskId);
+    if (!task) {
+      res.status(404);
+      throw new Error("Task not found");
+    }
+  
+    // Edit task fields
+    if (req.body.status) {
+      task.status = req.body.status;
+    }
+  
+    // Edit or add subtasks
+    if (req.body.subtasks && Array.isArray(req.body.subtasks)) {
+        task.subtasks = task.subtasks.map((currentSubtask, index) => {
+          const newSubtask = req.body.subtasks[index];
+          return {
+            ...currentSubtask,
+            ...newSubtask
+          };
+        });
+    }
+  
+    await board.save();
+    res.status(200).json(task); // Return updated task
+  });
+
+  module.exports = {
+    getBoards,
+    getBoardById,
+    createBoard,
+    deleteBoard,
+    updateBoardNameAndColumns,
+    addTaskToColumn,
+    deleteTask,
+    editTask,
+    editSubtask
+  };
+  
