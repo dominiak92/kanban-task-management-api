@@ -23,7 +23,7 @@ const TaskSchema = new mongoose.Schema({
   status: {
     type: String,
     default: '',
-    enum: ["todo", "doing", "done", "now", "next", "later"],
+    enum: ["To do", "Doing", "Done"],
   },
   subtasks: {
     type: [subtaskSchema],
