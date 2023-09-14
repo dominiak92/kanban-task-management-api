@@ -21,7 +21,7 @@ const createBoard = asyncHandler(async (req, res) => {
   });
 
   const createdBoard = await board.save();
-  res.status(201).json("Board is created " + createdBoard);
+  res.status(201).json(createdBoard);
 });
 
 // @desc Get a single board by ID
