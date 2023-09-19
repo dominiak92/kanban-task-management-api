@@ -42,6 +42,37 @@ const getBoardById = asyncHandler(async (req, res) => {
 // @route PUT /api/boards/:id
 // @access Private (but accessible by all logged-in users)
 
+// const updateBoardNameAndColumns = asyncHandler(async (req, res) => {
+//   const board = await Board.findById(req.params.id);
+
+//   if (!board) {
+//     res.status(404);
+//     throw new Error("Board not found");
+//   }
+
+//   //Edit Board Name
+
+//   if (req.body.name) {
+//     board.name = req.body.name;
+//   }
+
+//   // Add new columns
+
+//   if (req.body.newColumns) {
+//     board.columns.push(...req.body.newColumns);
+//   }
+
+//   if (req.body.columnsToRemove) {
+//     board.columns = board.columns.filter(
+//       (column) => !req.body.columnsToRemove.includes(column._id)
+//     );
+//   }
+
+//   const updatedBoard = await board.save();
+
+//   res.status(200).json("Board is updated " + updatedBoard);
+// });
+
 const updateBoardNameAndColumns = asyncHandler(async (req, res) => {
   const board = await Board.findById(req.params.id);
 
@@ -50,22 +81,14 @@ const updateBoardNameAndColumns = asyncHandler(async (req, res) => {
     throw new Error("Board not found");
   }
 
-  //Edit Board Name
-
+  // Edytuj nazwę tablicy
   if (req.body.name) {
     board.name = req.body.name;
   }
 
-  // Add new columns
-
-  if (req.body.newColumns) {
-    board.columns.push(...req.body.newColumns);
-  }
-
-  if (req.body.columnsToRemove) {
-    board.columns = board.columns.filter(
-      (column) => !req.body.columnsToRemove.includes(column._id)
-    );
+  // Zamień kolumny
+  if (req.body.columns) {
+    board.columns = req.body.columns;
   }
 
   const updatedBoard = await board.save();
