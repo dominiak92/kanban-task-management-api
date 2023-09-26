@@ -235,7 +235,7 @@ const deleteTask = asyncHandler(async (req, res) => {
     res.status(404);
     throw new Error("Task not found");
   }
-  task.remove();
+  task.deleteOne();
   await board.save();
   res.status(200).json({ message: "Task deleted" });
 });
